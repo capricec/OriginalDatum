@@ -1,0 +1,73 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no" />
+    <title>delimited | Chord Transitions</title>
+    <link rel="stylesheet" href="../css/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="../css/Refugee1_app.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
+  </head>
+  <body ng-app="app" ng-cloak ng-controller="mainCntrl">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>International Refugees <small>(1999-2013)</small></h1>
+        <hr/>
+      </div>
+    </div>
+
+    <div class="row" style="position:relative;">
+
+      <aside class="large-2 small-2 columns panel years">
+        <ul class="side-nav">
+          <li ng-repeat="year in years">
+            <input ng-model="$parent.selected_year" type="radio" name="years" ng-value="year" id="year_{{ year }}">
+            <label for="year_{{ year }}">{{ year }}</label>
+          </li>
+        </ul>
+      </aside>
+
+      <div class="large-7 small-6 columns" role="content">
+        <article>
+          <chord-diagram></chord-diagram>
+
+        </article>
+      </div>
+
+
+      <fieldset id="tooltip" class="row secondary">
+        <div class="large-12 small-12 columns">
+          <h6>{{ qFormat(tooltip.svalue) }} people from {{ tooltip.tname }} sought refuge in {{ tooltip.sname }}</h6>
+          ({{ pFormat(tooltip.svalue/tooltip.stotal) }} of {{ tooltip.tname }} refugees)
+        </div>
+        <div class="large-12 small-12 columns">
+          <h6>{{ qFormat(tooltip.tvalue) }} people from {{ tooltip.sname }} sought refuge in {{ tooltip.tname }}</h6>
+          ({{ pFormat(tooltip.tvalue/tooltip.ttotal) }} of {{ tooltip.sname }} refugees)
+        </div>
+      </fieldset>
+
+    </div>
+
+    <footer class="row">
+      <div class="large-12 columns">
+        <ul class="inline-list left">
+          <li>Data<a target="_blank" href="http://data.un.org/Data.aspx?d=UNHCR&f=indID%3AType-Ref">UNHCR</a></li>
+          <li>Regional Definitions <a target="_blank" href="http://unstats.un.org/unsd/methods/m49/m49regin.htm">UNSD</a></li>
+          <li>Interactive Diagram <a target="_blank" href="http://www.delimited.io/blog/2014/11/18/interactive-chord-diagrams-in-d3">Steven Hall</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.9/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <script src="../js/Refugee1_mainController.js"></script>
+    <script src="../js/Refugee1_matrixFactory.js"></script>
+    <script src="../js/Refugee1_chordDirective.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+  </body>
+</html>

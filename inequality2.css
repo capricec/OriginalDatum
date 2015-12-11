@@ -1,0 +1,27 @@
+#wrapper{
+  float: left;
+}
+h2{
+  text-align:center;
+}
+
+.counties {
+  fill: none;
+}
+
+text {
+  font-family: helvetica;
+  font-size: 10px;
+}
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.q0-9 { fill:rgb(255,246,202); }
+.q1-9 { fill:rgb(2255,246,130); }
+.q2-9 { fill:rgb(255,221,99); }
+.q3-9 { fill:rgb(255,128,43); }
+.q4-9 { fill:rgb(216,45,51); }
+.q5-9 { fill:rgb(90,0,0); }

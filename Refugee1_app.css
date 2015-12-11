@@ -1,0 +1,100 @@
+#tooltip {
+  background-color: white;
+  pointer-events: none;
+  font-size: 10px;
+  z-index: 1000;
+  color: grey;
+  position: fixed;
+  width: 400px;
+  border-radius: 0px;
+  opacity: 0;
+  bottom: 5%;
+  right: 2%;
+  box-shadow: 5px 5px 2.5px #666;
+  padding-top:0px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 0px;
+}
+
+path.chord {
+  -webkit-backface-visibility: hidden;
+  fill-opacity: .67;
+  stroke: none;
+}
+
+text, .group path {
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  margin: 0px;
+}
+
+.years {
+  height: 500px;
+  overflow: scroll;
+}
+
+aside {
+  margin: 0px;
+}
+
+h1{
+  text-align: center;
+}
+aside.large-2.small-2.columns.panel.years{
+  position:absolute;
+  left: 0px;
+  top:60px;
+  background-color: white;
+  border-color: white;
+  padding: 10px;
+  width: 100px;
+  text-align: center;
+}
+.large-7.small-6.columns{
+  position: relative;
+  margin: 0px 130px;
+  float:none;
+}
+
+h6{
+  font-size: 11px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+a{
+  color: #664152;
+}
+
+footer.row{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+
+label{
+  font-size: 12px;
+}
+
+ul.inline-list.left{
+  font-size: 10px;
+}
+.large-7 {
+    width: 65%; }
+    
+aside.legend{
+  opacity: 0.8;
+  width: 25%;
+  position: absolute;
+  right: 5px;
+  top: 0px;
+}
+
+
+
+
+
+
+
