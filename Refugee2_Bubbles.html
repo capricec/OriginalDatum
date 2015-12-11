@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+path.domain{
+  fill: none;
+}
+
+text{
+  font-size: 10px;
+}
+circle{
+  opacity: 0.4;
+}
+
+g.g-overlay{
+  position: absolute;
+  fill: none;
+  pointer-events: all;
+}
+
+.g-hide-hover {
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+
+.Southern.Asia, .Central.Asia, .Western.Asia, .South-Eastern.Asia, .Eastern.Asia{
+  fill: #BCB596;
+  stroke: #A39D82;
+}
+
+.South.America, .Central.America, .Caribbean, .North.America{
+  fill: #7E5068;
+  stroke: #891C58;
+}
+
+.Southern.Africa, .Middle.Africa, .Northern.Africa, .Western.Africa, .Eastern.Africa{
+  fill: #305C6A;
+  stroke: #035C77;
+}
+
+.Southern.Europe, .Northern.Europe, .Western.Europe, .Eastern.Europe{
+fill: #C59056;
+stroke: #D17008;
+}
+
+.Various, .Oceania{
+  fill: #7C6C76;
+  stroke: #893F70;
+}
+
+circle.g-highlight {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: 0.5;
+}
+.g-mean-text {
+  pointer-events: none;
+  font-family: Arial;
+  text-anchor: middle;
+  font-size: 10px;
+}
+
+.g-main-chart .g-legend select {
+  -webkit-appearance: menulist;
+}
+
+.g-main-chart .g-legend {
+  font-size: 12px;
+  left: 40px;
+  top: 56px;
+}
+
+.g-main-chart .g-average-legend {
+  margin-bottom: 13px;
+}
+
+.g-legend text {
+  font-size: 11px;
+  fill: #666;
+}
+
+.g-bubble-legend circle {
+  fill: none;
+  stroke: black;
+  stroke-width: 2px;
+}
+
+
+svg .g-team.g-team-selected,
+svg .g-team.g-team-hovered {
+  display: inline;
+}
+
+.g-team {
+  cursor: default;
+}
+
+svg .g-team {
+  display: none;
+}
+
+svg .g-team path{
+  fill: none;
+  stroke-width: 1px;
+  stroke-opacity: 0.5;
+}
+
+svg .g-team.g-team-selected path{
+  stroke-width: 1.5px;
+}
+
+aside.legend{
+  opacity: 0.8;
+  width: 150px;
+  height: 550px;
+  position: absolute;
+  right: 0%;
+  top: 5%;
+  background-color: #FAFCF2;
+
+}
+
+.axis{
+    fill: #AA9E8C;
+    font-family: Arial;
+}
+
+.g-bubble-text{
+  position: absolute;
+  left:0%;
+  font-family: Arial;
+  font-size: 7px;
+  white-space: pre;
+}
+
+.g-legend{
+  position:absolute;
+  left:0%;
+  top:30%;
+}
+
+img{
+  position:absolute;
+  top: 2%;
+  left:2%;
+}
+
+/*#option{
+  position:absolute;
+  top: 5%;
+  left: 7%;
+}
+
+input{
+  width: 90px;
+  text-align: center;
+  background-color: #7A7474;
+  border-radius:3px;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  border:none;
+
+}
+
+input:focus {
+    border: none;
+    outline-color: #757500;
+    background:#757500;
+    box-shadow: 0px 0px 1px #194D56;
+}*/
+select.g-team-chooser{
+  position: absolute;
+  left: 4%;
+  font-size: 8px;
+}
+
+h4{
+  font-family: Arial;
+  position: absolute;
+  left: 15%;
+  margin-top: 0px;
+  color: #3F3C3C;
+}
+</style>
+
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<h4> The Effects of Incoming Refugees on a Country's Population (%) </h4>
+<div class="g-chart g-main-chart"></div>
+<aside class="legend">
+    <!-- <div id="option">
+        <input name="updateButton"
+                    type="button"
+                    style = "font-size:12px;"
+                    value="Refugees In"
+                    onclick="updateIn()" />
+
+        <input name="updateButton"
+                     type="button"
+                     style = "font-size:12px;"
+                    value="Refugees Out"
+                    onclick="updateOut()" />
+    </div> -->
+    <img src="legend.svg" alt="legend" height="150" width="150"/>
+      </aside>
+
+<script type="text/javascript">
+
+//setup
+var margin = {top: 60, right: 82, bottom: 40, left: 55},
+    width = 736 - margin.left - margin.right,
+    height = 650 - margin.top - margin.bottom,
+    bounds = d3.geom.polygon([[0, 0], [0, height], [width, height], [width, 0]]);
+
+var formatHover = d3.format(".2%");
+var formatNumber = d3.format(",");
+
+//setting global variables for the update function
+// var team;
+// var teamLine;
+// var vis;
+// var vis2;
+// var overlay;
+// var filtdata;
+
+
+//setting the main settings for the inital graph
+var attributeY = "in";
+var attributeYpct = "in_pct";
+var maxaxis = .17;
+var maxradius = 18.4;
+var lgdbubbles = [100000, 1100000, 2400000, 3800000];
+var lgdtext = " 100,000    1,100,000    2,400,000     3,800,000";
+
+function radius(value){
+   return (Math.sqrt((value * Math.pow(maxradius,2)) / 3800000))
+ };
+
+var x = d3.scale.linear()
+    .domain([1999, 2013])
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .domain([0, maxaxis])
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .tickSize(4)
+    .ticks(15)
+    .tickFormat(function(d) { return d; })
+    .tickPadding(15);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("right")
+    .ticks(10)
+    .tickPadding(20)
+    .tickFormat(d3.format("%"))
+    .tickSize( -width);
+
+
+var svg = d3.select(".g-main-chart").append("svg")
+    .attr("width", (width + margin.left + margin.right))
+    .attr("height", (height + margin.top + margin.bottom))
+    .style("margin-top", 10 - margin.top + "px")
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("g")
+     .attr("class", "x axis")
+     .attr("transform", "translate(0," + height + ")")
+     .call(xAxis);
+
+svg.append("g")
+    .attr("class", "y axis")
+    .attr("transform", "translate(" + width + ",0)")
+    .call(yAxis);
+
+    queue()
+        .defer(d3.csv, "http://daxdigitaldesign.com/capricec/refugees/allyears4.csv")
+        .await(ready);
+
+
+
+// calling data and drawing
+function ready(error, data) {
+  data.forEach(
+    function(d) {
+      d.year =+d.Year;
+      d.in = +d.In;
+      d.out = +d.Out;
+      d.pop= +d.Population*1000;
+      d.in_pct = +(d.In / (d.Population*1000));
+      d.out_pct = +(d.Out / (d.Population*1000));
+      d.region = d.Region;
+      return d;
+    });
+
+  function rightime(value){
+    return (value[attributeYpct] > 0);
+    };
+
+  var filtdata = data.filter(rightime);
+
+  var RegionData = d3.nest()
+       .key(function(d) {return d.region; })
+       .key(function(d) {return d.Code; })
+       .entries(filtdata);
+
+  var CountryData = d3.nest()
+        .key(function(d) {return d.Code; })
+        .sortValues(function(a,b) { return parseFloat(a.year) - parseFloat(b.year); } )
+        .entries(filtdata);
+
+
+//legend
+  function drawLegend(container, headline) {
+
+        var legend = container.append("div")
+            .attr("class", "g-legend");
+
+        var selectedLegend = legend.append("div")
+            .attr("class", "g-selected-legend");
+
+        var teamChooser = selectedLegend.append("select")
+            .attr("class", "g-team-chooser");
+
+        teamChooser.append("option")
+            .attr("value", "none")
+            .text("Choose a Country");
+
+        teamChooser.on("change", function() { selectCountry(this.value); })
+          .selectAll("optgroup")
+            .data(RegionData)
+          .enter().append("optgroup")
+            .attr("label", function(d) { return (d.key).toUpperCase(); })
+          .selectAll("option")
+            .data(function(d) { return d.values; })
+          .enter().append("option")
+            .attr("value", function(d) { return d.key; })
+            .text(function(d) { return d.key; });
+
+            var bubbleLegend = legend.append("div")
+                .attr("class", "g-bubble-legend");
+
+            var bubSvg = bubbleLegend.append("svg")
+              .attr("width", 150)
+              .attr("height", 100)
+            .append("g")
+              .attr("transform", "translate(2, 2)");
+
+            bubSvg.append("circle")
+                .attr("cy", 75)
+                .attr("cx", 15)
+                .attr("r", radius(lgdbubbles[0]));
+
+            bubSvg.append("circle")
+                .attr("cy", 75)
+                .attr("cx", 45)
+                .attr("r", radius(lgdbubbles[1]));
+
+            bubSvg.append("circle")
+                .attr("cy", 75)
+                .attr("cx", 85)
+                .attr("r", radius(lgdbubbles[2]));
+
+            bubSvg.append("circle")
+                .attr("cy", 75)
+                .attr("cx", 128)
+                .attr("r", radius(lgdbubbles[3]));
+
+                var bubbleText = legend.append("div")
+                    .attr("class", "g-bubble-text")
+                    .attr("width", 150);
+
+              bubbleText.append("div")
+                  .text(lgdtext);
+
+  };
+
+drawLegend(d3.select(".legend"));
+
+// selection function for onclick of bubbles
+  var teamByCode = {};
+    CountryData.forEach(function(d) {
+      teamByCode[d.key] = d;
+    });
+
+  function selectCountry(code) {
+       d3.selectAll(".g-team-selected").classed("g-team-selected", false);
+       if (selectedTeam = code) {
+         d3.selectAll("." + code).classed("g-team-selected", true);
+         d3.selectAll(".g-legend .g-selected-legend text").text(teamByCode[code].name);
+       }
+       d3.selectAll(".g-team-chooser").property("value", code || "none");
+       d3.selectAll(".g-legend a").style("display", code? "inline-block" : "none");
+
+     };
+
+ // adding all the circles
+  var bgCirclesContainer = svg.append("g");
+
+  bgCirclesContainer.selectAll("circle")
+        .data(filtdata, function(d){return (d.Country+d.year);})
+        .enter().append("circle")
+        .attr("class", function (d) { return d.region; })
+        .attr("r", function (d) { return radius(d[attributeY]); })
+        .attr("cx", function(d) { return x(d.year); })
+        .attr("cy", function(d) { return y(d[attributeYpct]); });
+
+// adding overlay for hover and select.
+  var teamsContainer = svg.append("g");
+
+  var pullregion = function(d){
+    return d.region;
+  };
+
+  var team =teamsContainer.selectAll(".g-team")
+          .data(CountryData)
+          .enter().append("g")
+          .attr("class", function(d) { return "g-team " + d.key +" "+ pullregion(d.values[0]) ; });
+
+  var teamLine = d3.svg.line()
+     .x(function(d) { return x(d.year); })
+     .y(function(d) { return y(d[attributeYpct]); });
+
+  team.append("path")
+      .attr("d", function(d) { return teamLine(d.values); });
+
+  team.selectAll("circle")
+      .data(function(d) { return d.values; })
+    .enter().append("circle")
+      .attr("r", function (d) { return radius(d[attributeY]); })
+      .attr("cx", function(d) { return x(d.year); })
+      .attr("cy", function(d) { return y(d[attributeYpct]); });
+
+  teamsContainer.append("g")
+         .attr("class", "g-overlay")
+         .selectAll(".voronoi")
+         .data(d3.geom.voronoi(filtdata.map(function(d) { return [x(d.year), y(d[attributeYpct]) + Math.random() - .5]; })).map(function(d, i) {
+           d.path = "M" + d.join("L") + "Z";
+           d.data = filtdata[i];
+           return d;
+          }))
+       .enter().append("path")
+         .attr("d", function(d) { return d.path; })
+         .on("mouseover", function(d, i) { selectValue(d.data); })
+         .on("mouseout", function(d, i) { selectValue(null); })
+       .on("click", function(d, i) { selectCountry(d.data.Code); });
+
+    var hoverLabel = teamsContainer.append("g")
+        .attr("class", "g-mean-text")
+        .style("display", "none");
+
+    var hoverCountry = hoverLabel.append("text")
+        .attr("dy", ".35em");
+
+    var hoverNumber = hoverLabel.append("text")
+        .attr("class", "small number")
+        .attr("dy", ".35em");
+
+    var hoverIn= hoverLabel.append("text")
+        .attr("class", "small number")
+        .attr("dy", ".35em");
+
+//function for selected bubbles
+    function selectValue(d) {
+            if (d) {
+              hoverLabel.style("display", null).attr("transform", "translate(" + x(d.year) + "," + y(d[attributeYpct]) + ")");
+              hoverNumber.attr("y", -30).text(formatHover(d[attributeYpct]));
+              hoverCountry.attr("y", -42).text(d.Country);
+              hoverIn.attr("y", -18).text(formatNumber(d[attributeY]));
+              d3.selectAll(".g-hide-hover").style("opacity", 0);
+            } else {
+              d3.selectAll(".g-hide-hover").style("opacity", 1);
+              hoverLabel.style("display", "none");
+            }
+          };
+
+};
+
+
+
+</script>
+</body>
+</html>
